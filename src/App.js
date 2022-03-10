@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+import logo from './LGM_ingame_2.jpg';
 import './App.css';
 
 function App() {
