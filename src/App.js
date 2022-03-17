@@ -1,29 +1,57 @@
-import logo from './LGM_ingame_2.jpg';
+import faker from '@faker-js/faker';
+import faker_ko from '@faker-js/faker/locale/ko';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { CardActionArea } from '@mui/material';
 import './App.css';
-import { faker } from "@faker-js/faker";
 
 function App() {
-  const h1Element = <h1>제목 태그 입니다</h1>
-  const imgElement = <img src={logo} className="App-logo" alt="logo" />
+  const userDatas = [];
+  
+  while(userDatas.length < 70) {
+    userDatas.push({
+      avatar: faker.image.avatar(),
+      name: `${faker_ko.name.lastName()}${faker_ko.name.firstName()}`,
+      email: faker.internet.email(),
+      jobTitle: faker.name.jobTitle(),
+      phoneNo: faker_ko.phone.phoneNumber()
+    })
+  }
 
-        testData.map(function(contents){
-          return <li>{contents}</li>
-        })
 
-        testData.map((contents)=><li>{contents}</li>)
+  const userCards = userDatas.map((userData, idx) => {
+    return <div key={idx}>
+      <Card sx={{ maxWidth: 500 }}>
+        <CardActionArea>
+          <CardMedia
+            component="img"
+            height="300"
+            image={userData.avatar }
+            alt="avartar"
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              이름 : {userData.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              직업 : { userData.jobTitle }<br />
+              이메일 : { userData.email }<br />
+              전화번호 : { userData.phoneNo}<br /> 
+            </Typography>
+          </CardContent>
+        </CardActionArea>
+      </Card>
+    </div>
+    
+    
+  })
+
+  console.log(userDatas)
   return (
-   
     <div className="App">
-      <header className="App-header">
-      { h1Element }
-      { imgElement }
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <ul>
-
-        </ul>
-      </header>
+      {userCards}
     </div>
   );
 }
