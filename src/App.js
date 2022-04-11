@@ -12,7 +12,8 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import cityLatLon from './dataset/weatherData'
+import { cityLatLon } from './dataset/weatherData'
+import Grid from '@mui/material/Grid';
 const userDatas = makeUserDatas(50);
 
 function App() {
@@ -24,9 +25,9 @@ function App() {
     setUseDarkmode(useDarkMode ? false : true)
   };
   const selectedHandleChange = (event) => {
-      const cityName = event.target.name
-      
-    setselectedCityData()
+      const cityName = event.target.value;
+      const findCitytLatLon = cityLatLon.find(data => data.name === cityName)
+    setselectedCityData(findCitytLatLon)
   }
   
   useEffect(()=>{
@@ -52,42 +53,43 @@ function App() {
 
   return (
     <ThemeProvider theme={createTheme({
-      palette: {
-        mode: useDarkMode ? 'dark' : 'light',
-      },
-    })
+        palette: {
+          mode: useDarkMode ? 'dark' : 'light',
+        },
+      })
     }>
         <Box sx={{
-          height : '100%',
+          minHeight : '100%',
           bgcolor: 'Background.default',
           color: 'text.primary',
           p: 1, 
         }}>
-            <FormControl>
-                <InputLabel id="demo-simple-select-label">Age</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={selectedCityData.name}
-                  label="Age"
-                  onChange={selectedHandleChange}
-                >
-                  <MenuItem value={"서울"}>서울</MenuItem>
-                  <MenuItem value={"안양"}>안양</MenuItem>
-                  
-                </Select>
-            </FormControl>
-          <Weathercard weatherData={weatherData} apiError={apiError} />
-        <Switch 
-          checked={useDarkMode} 
-          onChange={handleChange}
-          color="warning"
-          inputProps={{ 'aria-label': 'controlled' }}
-        />
-      
-        <Container maxWidth="lg">
-            <UserCardList userDatas = {userDatas}/>
-        </Container>
+          <Container maxWidth="lg">
+                <FormControl>
+                    <InputLabel id="demo-simple-select-label">Age</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={selectedCityData.name}
+                      label="Age"
+                      onChange={selectedHandleChange}
+                    >
+                      {cityLatLon.map((city)=> <MenuItem value={city.name}>{city.name}</MenuItem>)}
+                    </Select>
+                </FormControl>
+                <Grid container spacing={{ xs : 2, md: 3}} columns={{ xs:4, sm: 4, md: 12 }}>
+                  <Weathercard weatherData={weatherData} apiError={apiError} />
+                  <Weathercard weatherData={weatherData} apiError={apiError} />
+                  <Weathercard weatherData={weatherData} apiError={apiError} />
+                </Grid>  
+                <Switch 
+                  checked={useDarkMode} 
+                  onChange={handleChange}
+                  color="warning"
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+              <UserCardList userDatas = {userDatas}/>
+          </Container>
       </Box>
     
     </ThemeProvider>

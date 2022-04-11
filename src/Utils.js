@@ -1,7 +1,7 @@
 import faker from '@faker-js/faker';
 import faker_ko from '@faker-js/faker/locale/ko';
 
-const getRandomIntInclusive = (min, max) => {
+export const getRandomIntInclusive = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min) + min);
