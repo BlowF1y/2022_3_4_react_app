@@ -10,15 +10,18 @@ import axios from 'axios';
 
 function WeatherCard(props) {
     const { id } = props;
+    const {cityName} = props;
+    const defaultCityName = localStorage.getItem(id+'_city') || cityName;
     const [weatherData, setweatherData] = useState(null);
     const [apiError, setApiError] = useState(null);
-    const [selectedCityData, setselectedCityData] = useState({name : "안양", lat: 37.3, lon: 126.9});
-    
+    const findCity = cityLatLon.find(data=> data.name === cityName);
+    const [selectedCityData, setSelectedCityData] = useState(findCity);
 
     const selectedHandleChange = (event) => {
         const cityName = event.target.value;
-        const findCitytLatLon = cityLatLon.find(data => data.name === cityName)
-      setselectedCityData(findCitytLatLon)
+        const findCityLatLon = cityLatLon.find(data => data.name === cityName)
+        localStorage.setItem(id+'_city', findCityLatLon.name);
+        setSelectedCityData(findCityLatLon)
     }
 
 
@@ -35,6 +38,8 @@ function WeatherCard(props) {
               setweatherData(result.data);
               localStorage.setItem(cityName, JSON.stringify(result.data));
               localStorage.setItem('_현재시간', Date.now());
+            }).catch(err => {
+              setApiError(err);
             })
     
           } else if(Date.now() - localStorage.getItem(cityGetDate) / 1000 / 60 < 60){ 
@@ -50,8 +55,7 @@ function WeatherCard(props) {
         const {temp, temp_min, temp_max, feels_like, humidity } = weatherData.main;
         const { main, icon } = weatherData.weather[0];
         const parseWeatherData = weather_mapping_data[main] ? weather_mapping_data[main] : weather_mapping_data["Mist"]
-
-        const iconURL = ``;
+        const iconUrl = `http://openweathermap.org/img/wn/${icon}@2x.png`;
 
         return <Grid item xs={1} sm={2} md={4}>
                 <FormControl>
@@ -66,15 +70,16 @@ function WeatherCard(props) {
                       {cityLatLon.map((city)=> <MenuItem value={city.name}>{city.name}</MenuItem>)}
                     </Select>
                 </FormControl>
-            <Typography>{`현재날씨 : ${main}`}</Typography>
-            <img src={iconURL} alt="날씨 아이콘"></img>
-            <Typography>{`현재온도 : ${temp}℃ 체감온도 : ${feels_like}℃`}</Typography>
-            <Typography>{`최저기온 : ${temp_min}℃ 최고기온 : ${temp_max}℃ 습도 : ${humidity}`}</Typography>
+            <Typography>{`현재날씨: ${parseWeatherData.name}`}</Typography>
+            <parseWeatherData.icon sx={{fontSize:125,color:'red'}} />
+            <img src={iconUrl} alt="현재날씨 아이콘" />
+            <Typography>{`현재온도 : ${temp}℃ 체감온도 ${feels_like}℃`}</Typography>
+            <Typography>{`최저기온 : ${temp_min}℃ 최고기온 ${temp_max}℃ 습도: ${humidity}%`}</Typography>
         </Grid>
     }
 
         return <>
-            {   apiError ? 
+            {   apiError ?  //날씨 정보가 없으면 없다고 표시 
                 <Typography>{apiError.message}</Typography>
                 : 
                 weatherData ? 
